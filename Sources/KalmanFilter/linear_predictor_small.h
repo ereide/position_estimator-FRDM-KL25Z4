@@ -2,7 +2,7 @@
  * linear_predictor.h
  *
  *  Created on: Dec 16, 2017
- *      Author: eivind
+ *      Author: Eivind Roson Eide (c)
  */
 
 #ifndef SOURCES_LINEAR_PREDICTOR_H_

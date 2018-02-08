@@ -71,7 +71,7 @@ gpio_input_pin_user_config_t switchPins[] = {
 };
 
 /* Declare Output GPIO pins */
-gpio_output_pin_user_config_t ledPins[] = {
+gpio_output_pin_user_config_t outputPins[] = {
     {
         .pinName = kGpioLED1,
         .config.outputLogic = 1,
@@ -91,8 +91,29 @@ gpio_output_pin_user_config_t ledPins[] = {
         .config.driveStrength = kPortLowDriveStrength,
     },
     {
+        .pinName = kGpioOC,
+        .config.outputLogic = 1,
+        .config.slewRate = kPortSlowSlewRate,
+        .config.driveStrength = kPortLowDriveStrength,
+    },
+
+    {
+        .pinName = kGpioRST,
+        .config.outputLogic = 1,
+        .config.slewRate = kPortSlowSlewRate,
+        .config.driveStrength = kPortLowDriveStrength,
+    },
+
+    {
+        .pinName = kGpioDC,
+        .config.outputLogic = 1,
+        .config.slewRate = kPortSlowSlewRate,
+        .config.driveStrength = kPortLowDriveStrength,
+    },
+
+    {
         .pinName = GPIO_PINS_OUT_OF_RANGE,
-    }
+}
 };
 
 

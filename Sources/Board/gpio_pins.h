@@ -73,11 +73,13 @@ enum _gpio_pins
     kGpioLED3        = GPIO_MAKE_PIN(GPIOD_IDX,  1),   /* FRDM-KL25Z4 Blue LED */
     kGpioSW1         = GPIO_MAKE_PIN(GPIOD_IDX,  6),   /* FRDM-KL25Z4 power manager */
 
-
+	kGpioOC   	     = GPIO_MAKE_PIN(GPIOA_IDX, 12),   /* FRDM-FRDM-KL25Z4 -> OLED: OCD  */
+	kGpioRST  		 = GPIO_MAKE_PIN(GPIOA_IDX,  2),   /* FRDM-FRDM-KL25Z4 -> OLED: RST  */
+	kGpioDC 	     = GPIO_MAKE_PIN(GPIOB_IDX, 13),   /* FRDM-FRDM-KL25Z4 -> OLED: DC   */
 };
 
 extern gpio_input_pin_user_config_t switchPins[];
-extern gpio_output_pin_user_config_t ledPins[];
+extern gpio_output_pin_user_config_t outputPins[];
 
 #endif /* __FSL_GPIO_PINS_H__ */
 

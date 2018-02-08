@@ -33,39 +33,81 @@
 #include "fsl_clock_manager.h"
 #include "fsl_debug_console.h"
 
+static void tpm_mux_select(void){
+	// configure tpm pins
+	PORT_HAL_SetMuxMode(PORTB,18u,kPortMuxAlt3);
+	PORT_HAL_SetMuxMode(PORTB,19u,kPortMuxAlt3);
+}
+
+static void spi_oled_mux_select(void){
+	// Setup SPI1 pins for OLED
+	/*	KL25_SPI_MISO	--> PTA6	(ALT3)		*/
+	PORT_HAL_SetMuxMode(PORTA_BASE, 6, kPortMuxAlt3);
+
+	/*	KL25_SPI_MOSI	--> PTA8	(ALT3)		*/
+	PORT_HAL_SetMuxMode(PORTA_BASE, 8, kPortMuxAlt3);
+
+	/*	KL25_SPI_SCK	--> PTA9	(ALT3)		*/
+	PORT_HAL_SetMuxMode(PORTA_BASE, 9, kPortMuxAlt3);
+
+	// Setup GPIO pins for OLED
+	PORT_HAL_SetMuxMode(PORTA_BASE, 12u, kPortMuxAsGpio); // OCS
+	PORT_HAL_SetMuxMode(PORTB_BASE, 13u, kPortMuxAsGpio); // DC
+	PORT_HAL_SetMuxMode(PORTA_BASE, 2u , kPortMuxAsGpio);  // RST
+}
+
+static void i2c_accel_mux_select(void){
+	// configure i2c pins
+	//Sets the mux mode for the uart pins PE0 and PE1
+	/* PORTE_PCR24 */
+	PORT_HAL_SetMuxMode(PORTE,24u,kPortMuxAlt5);
+	/* PORTE_PCR25 */
+	PORT_HAL_SetMuxMode(PORTE,25u,kPortMuxAlt5);
+}
+
+static void uart_gps_mux_select(void){
+    /* PORTE_PCR0 */
+    PORT_HAL_SetMuxMode(PORTE,0u,kPortMuxAlt3);
+    /* PORTE_PCR1 */
+    PORT_HAL_SetMuxMode(PORTE,1u,kPortMuxAlt3);
+}
+
 void hardware_init(void) {
 
-  /* enable clock for PORTs */
-  CLOCK_SYS_EnablePortClock(PORTA_IDX);
-  CLOCK_SYS_EnablePortClock(PORTB_IDX);
-  CLOCK_SYS_EnablePortClock(PORTC_IDX);
-  CLOCK_SYS_EnablePortClock(PORTE_IDX);
+	/* enable clock for PORTs */
+	CLOCK_SYS_EnablePortClock(PORTA_IDX);
+	CLOCK_SYS_EnablePortClock(PORTB_IDX);
+	CLOCK_SYS_EnablePortClock(PORTC_IDX);
+	CLOCK_SYS_EnablePortClock(PORTD_IDX);
+	CLOCK_SYS_EnablePortClock(PORTE_IDX);
 
-  // configure i2c pins
-  /* PORTE_PCR24 */
-  PORT_HAL_SetMuxMode(PORTE,24u,kPortMuxAlt5);
-  /* PORTE_PCR25 */
-  PORT_HAL_SetMuxMode(PORTE,25u,kPortMuxAlt5);
 
-  // configure tpm pins
-  PORT_HAL_SetMuxMode(PORTB,18u,kPortMuxAlt3);
-  PORT_HAL_SetMuxMode(PORTB,19u,kPortMuxAlt3);
 
-  //Sets the mux mode for the uart pins PE0 and PE1
-  configure_uart_pins(1u);
-  /*
-  // configure usart2 pins
-  // PORTE PCR 1 & 2
-  PORT_HAL_SetMuxMode(PORTE, 1u, kPortMuxAlt3);
-  PORT_HAL_SetMuxMode(PORTE, 2u, kPortMuxAlt3);
-  */
 
-  /* Select the clock source for the TPM counter */
-  CLOCK_SYS_SetTpmSrc(2u, kClockTpmSrcPllFllSel);
 
-  /* Init board clock */
-  BOARD_ClockInit();
-  dbg_uart_init();
+
+	/*
+	// configure usart2 pins
+	// PORTE PCR 1 & 2
+	PORT_HAL_SetMuxMode(PORTE, 1u, kPortMuxAlt3);
+	PORT_HAL_SetMuxMode(PORTE, 2u, kPortMuxAlt3);
+	*/
+
+	uart_gps_mux_select();
+
+	//Set I2C pins for communicating with accelerometer
+	i2c_accel_mux_select();
+
+	//Set SPI pins for communicating with OLED screen
+	spi_oled_mux_select();
+
+
+	/* Select the clock source for the TPM counter */
+	CLOCK_SYS_SetTpmSrc(2u, kClockTpmSrcPllFllSel);
+
+	/* Init board clock */
+	BOARD_ClockInit();
+	dbg_uart_init();
 
 }
 

@@ -46,6 +46,7 @@
 #include "accel.h"
 #include "linear_predictor_small.h"
 #include "gps.h"
+#include "display.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Defines
@@ -125,20 +126,30 @@ void get_accel_data(const accel_dev_t* accDev, float *xData, float *yData, float
  */
 int main (void)
 {
-	char c;
 
 	//Initialize system drivers
 	init_system();
 
-	gps_init();
+	init_display();
+
+	draw_something();
 
 
+
+
+	//gps_init();
+
+
+	/*
+
+	char c;
 
 	while(1){
 		//PRINTF("Something \n\r");
 		c = gps_read();
 		PRINTF("%X", c);
 	}
+	*/
 
 	/*
 	//Setup and initialize accelerometer

@@ -13,7 +13,7 @@
 #include "fsl_uart_driver.h"
 #include "fsl_tpm_driver.h"
 #include "fsl_debug_console.h"
-
+#include "fsl_clock_manager.h"
 
 #define CR '\r'		//Carriage return
 #define LF '\n'		//Line feed
@@ -39,6 +39,9 @@ void serial_delay(uint32_t milli){
 }
 
 void serial_init(uint32_t baud){
+
+	CLOCK_SYS_EnableUartClock(GPS_UART_INSTANCE);
+
 	uartConfig.baudRate = baud;
 
 	UART_DRV_Init(GPS_UART_INSTANCE, &uartState, &uartConfig);
@@ -54,11 +57,12 @@ void serial_println(const char *str){
 
 	PRINTF("n = %d \n\r", n);
 
+	//TODO: DO THIS
 	//sends characters
-	//UART_DRV_SendDataBlocking(GPS_UART_INSTANCE, (uint8_t*)str, n, GPS_TIMEOUT);
+	UART_DRV_SendDataBlocking(GPS_UART_INSTANCE, (uint8_t*)str, n, GPS_TIMEOUT);
 
 	//terminates the line
-	//UART_DRV_SendDataBlocking(GPS_UART_INSTANCE, (uint8_t*)endline, 2, GPS_TIMEOUT);
+	UART_DRV_SendDataBlocking(GPS_UART_INSTANCE, (uint8_t*)endline, 2, GPS_TIMEOUT);
 }
 
 

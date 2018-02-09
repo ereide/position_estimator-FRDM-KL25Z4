@@ -83,13 +83,13 @@ gpio_output_pin_user_config_t outputPins[] = {
         .config.outputLogic = 1,
         .config.slewRate = kPortSlowSlewRate,
         .config.driveStrength = kPortLowDriveStrength,
-    },
+    }, /* TODO: Collides with SPI SCK
     {
         .pinName = kGpioLED3,
         .config.outputLogic = 1,
         .config.slewRate = kPortSlowSlewRate,
         .config.driveStrength = kPortLowDriveStrength,
-    },
+    },  */
     {
         .pinName = kGpioOC,
         .config.outputLogic = 1,

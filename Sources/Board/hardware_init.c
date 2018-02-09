@@ -42,18 +42,18 @@ static void tpm_mux_select(void){
 static void spi_oled_mux_select(void){
 	// Setup SPI1 pins for OLED
 	/*	KL25_SPI_MISO	--> PTA6	(ALT3)		*/
-	PORT_HAL_SetMuxMode(PORTA_BASE, 6, kPortMuxAlt3);
+	PORT_HAL_SetMuxMode(PORTD, 3u,  kPortMuxAlt2);
 
 	/*	KL25_SPI_MOSI	--> PTA8	(ALT3)		*/
-	PORT_HAL_SetMuxMode(PORTA_BASE, 8, kPortMuxAlt3);
+	PORT_HAL_SetMuxMode(PORTD, 2u,  kPortMuxAlt2);
 
 	/*	KL25_SPI_SCK	--> PTA9	(ALT3)		*/
-	PORT_HAL_SetMuxMode(PORTA_BASE, 9, kPortMuxAlt3);
+	PORT_HAL_SetMuxMode(PORTD, 1u,  kPortMuxAlt2);
 
 	// Setup GPIO pins for OLED
-	PORT_HAL_SetMuxMode(PORTA_BASE, 12u, kPortMuxAsGpio); // OCS
-	PORT_HAL_SetMuxMode(PORTB_BASE, 13u, kPortMuxAsGpio); // DC
-	PORT_HAL_SetMuxMode(PORTA_BASE, 2u , kPortMuxAsGpio);  // RST
+	PORT_HAL_SetMuxMode(PORTD, 0u,  kPortMuxAsGpio); // OCS
+	PORT_HAL_SetMuxMode(PORTD, 5u,  kPortMuxAsGpio); // DC
+	PORT_HAL_SetMuxMode(PORTA, 13u, kPortMuxAsGpio); // RST
 }
 
 static void i2c_accel_mux_select(void){
@@ -67,32 +67,38 @@ static void i2c_accel_mux_select(void){
 
 static void uart_gps_mux_select(void){
     /* PORTE_PCR0 */
-    PORT_HAL_SetMuxMode(PORTE,0u,kPortMuxAlt3);
+    PORT_HAL_SetMuxMode(PORTE,0u, kPortMuxAlt3);
     /* PORTE_PCR1 */
-    PORT_HAL_SetMuxMode(PORTE,1u,kPortMuxAlt3);
+    PORT_HAL_SetMuxMode(PORTE,1u, kPortMuxAlt3);
 }
 
-void hardware_init(void) {
+static void gpio_led_mux_select(void){
+	PORT_HAL_SetMuxMode(PORTB, 18u, kPortMuxAsGpio);  // RED_LED
+	PORT_HAL_SetMuxMode(PORTB, 19u, kPortMuxAsGpio);  // GREEN_LED
+	PORT_HAL_SetMuxMode(PORTD, 1u,  kPortMuxAsGpio);  // BLUE_LED
+}
 
+
+static void enable_clock(void){
 	/* enable clock for PORTs */
 	CLOCK_SYS_EnablePortClock(PORTA_IDX);
 	CLOCK_SYS_EnablePortClock(PORTB_IDX);
 	CLOCK_SYS_EnablePortClock(PORTC_IDX);
 	CLOCK_SYS_EnablePortClock(PORTD_IDX);
 	CLOCK_SYS_EnablePortClock(PORTE_IDX);
+}
 
+void hardware_init(void) {
 
+	enable_clock();
 
+	//Set GPIO
+	gpio_led_mux_select();
 
+	//Set TPM pins
+	tpm_mux_select();
 
-
-	/*
-	// configure usart2 pins
-	// PORTE PCR 1 & 2
-	PORT_HAL_SetMuxMode(PORTE, 1u, kPortMuxAlt3);
-	PORT_HAL_SetMuxMode(PORTE, 2u, kPortMuxAlt3);
-	*/
-
+	//Set UART pins for communicating with GPS
 	uart_gps_mux_select();
 
 	//Set I2C pins for communicating with accelerometer
@@ -101,7 +107,6 @@ void hardware_init(void) {
 	//Set SPI pins for communicating with OLED screen
 	spi_oled_mux_select();
 
-
 	/* Select the clock source for the TPM counter */
 	CLOCK_SYS_SetTpmSrc(2u, kClockTpmSrcPllFllSel);
 
@@ -109,16 +114,6 @@ void hardware_init(void) {
 	BOARD_ClockInit();
 	dbg_uart_init();
 
+    GPIO_DRV_Init(0, outputPins);
 }
 
-/*!
-** @}
-*/
-/*
-** ###################################################################
-**
-**     This file was created by Processor Expert 10.4 [05.10]
-**     for the Freescale Kinetis series of microcontrollers.
-**
-** ###################################################################
-*/

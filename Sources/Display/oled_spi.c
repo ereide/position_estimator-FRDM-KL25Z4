@@ -11,6 +11,16 @@
 #include "board.h"
 
 
+/*******************************************************************************
+ * Definitions
+ ******************************************************************************/
+#define SPI_MASTER_INSTANCE         BOARD_SPI_INSTANCE  /*! User change define to choose SPI instance */
+#define TRANSFER_SIZE               (1)
+#define TRANSFER_BAUDRATE           (500000U)           /*! Transfer baudrate - 500k */
+#define MASTER_TRANSFER_TIMEOUT     (1000U)             /*! Transfer timeout of master - 5s */
+
+
+
 /********************************** low level pin interface */
 
 static volatile spi_master_state_t			spiMasterState;
@@ -21,6 +31,16 @@ static volatile uint8_t payloadBytes[32];
 
 
 
+#define OLED_SPI_INSTANCE 0
+
+static void set_spi_userconfig(void){
+	spiUserConfig.polarity		= kSpiClockPolarity_ActiveHigh;
+	spiUserConfig.phase			= kSpiClockPhase_FirstEdge;
+	spiUserConfig.direction		= kSpiMsbFirst;
+	spiUserConfig.bitsPerSec	= TRANSFER_BAUDRATE;
+}
+
+
 void oled_spi_init(void){
 	CLOCK_SYS_EnableSpiClock(0);
 
@@ -29,13 +49,26 @@ void oled_spi_init(void){
 	 *
 	 */
 	uint32_t			calculatedBaudRate;
-	spiUserConfig.polarity		= kSpiClockPolarity_ActiveHigh;
-	spiUserConfig.phase		= kSpiClockPhase_FirstEdge;
-	spiUserConfig.direction		= kSpiMsbFirst;
-	spiUserConfig.bitsPerSec	= 50000;
-	SPI_DRV_MasterInit(0 /* SPI master instance */, (spi_master_state_t *)&spiMasterState);
-	SPI_DRV_MasterConfigureBus(0 /* SPI master instance */, (spi_master_user_config_t *)&spiUserConfig, &calculatedBaudRate);
-	printf("Calculated baud rate is %ld\n", calculatedBaudRate);
+
+	//Init SPI driver
+    SPI_DRV_MasterInit(SPI_MASTER_INSTANCE, &spiMasterState);
+
+    //Set SPI configuration
+	set_spi_userconfig();
+    SPI_DRV_MasterConfigureBus(SPI_MASTER_INSTANCE, &spiUserConfig, &calculatedBaudRate);
+
+
+	// Check if the configuration is correct
+    if (calculatedBaudRate > spiUserConfig.bitsPerSec)
+    {
+        PRINTF("\r**Something failed in the master bus config \r\n");
+        return;
+    }
+    else
+    {
+        PRINTF("\r\nBaud rate in Hz is: %d\r\n", calculatedBaudRate);
+    }
+
 
 	//Reseting OLED screen
 	/*
@@ -47,19 +80,26 @@ void oled_spi_init(void){
 	OSA_TimeDelay(1000);
 	GPIO_DRV_SetPinOutput(kGpioRST);
     OSA_TimeDelay(1000);
+
+    PRINTF("SPI-OLED Init complete \n\r");
 }
 
 
 static void oled_spiWrite(uint8_t commandByte){
-	spi_status_t status;
+	//spi_status_t status;
 	payloadBytes[0] = commandByte;
 
-	status = SPI_DRV_MasterTransferBlocking(0	/* master instance */,
-					NULL		/* spi_master_user_config_t */,
-					(const uint8_t * restrict)&payloadBytes[0],
-					(uint8_t * restrict)&inBuffer[0],
-					1		/* transfer size */,
-					1000		/* timeout in microseconds (unlike I2C which is ms) */);
+    // Start transfer data to slave
+    if (SPI_DRV_MasterTransferBlocking( SPI_MASTER_INSTANCE,
+    									NULL /* spi_master_user_config_t */,
+    									(const uint8_t * restrict)&payloadBytes[0],
+										NULL,
+										TRANSFER_SIZE,
+										MASTER_TRANSFER_TIMEOUT) == kStatus_SPI_Timeout)
+    {
+        PRINTF("\r\n**Sync transfer timed-out \r\n");
+        return;
+    }
 }
 
 
@@ -96,8 +136,6 @@ void oled_delay(uint32_t milli){
 
 void oled_writeCommand(uint8_t commandByte)
 {
-	spi_status_t status;
-
 	/*
 	 *	/CS (PTA12) low
 	 */
@@ -108,6 +146,7 @@ void oled_writeCommand(uint8_t commandByte)
 	 */
 	GPIO_DRV_ClearPinOutput(kGpioDC);
 
+	// Write output
 	oled_spiWrite(commandByte);
 
 	/*

@@ -62,12 +62,17 @@
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
+static void LED_toggle_master(void)
+{
+    GPIO_DRV_TogglePinOutput(kGpioLED1);
+}
+
+
 void init_system(void) {
+	PRINTF("\n\r");
 
     // Initialize standard SDK demo application pins.
     hardware_init();
-
-
 
     // Accel device driver utilizes the OSA, so initialize it.
     OSA_Init();
@@ -130,9 +135,25 @@ int main (void)
 	//Initialize system drivers
 	init_system();
 
+	//Initialize OLED screen
 	init_display();
 
+	PRINTF("OLED SSD1331 setup complete \n\r");
+
+
+	OSA_TimeDelay(500);
+
 	draw_something();
+
+	PRINTF("Init complete \n\r");
+
+	while(1){
+		OSA_TimeDelay(1000);
+		draw_something();
+		draw_something_else();
+
+
+	}
 
 
 
@@ -194,5 +215,6 @@ int main (void)
         PRINTF("State    :	z= %de-3 v = %de-3 a = %de-3\r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000));
     }
 
-    */
+	*/
+
 }

@@ -23,8 +23,8 @@
 
 /********************************** low level pin interface */
 
-static volatile spi_master_state_t			spiMasterState;
-static volatile spi_master_user_config_t	spiUserConfig;
+static spi_master_user_config_t				spiUserConfig;
+static spi_master_state_t			spiMasterState;
 
 static volatile uint8_t inBuffer[32];
 static volatile uint8_t payloadBytes[32];
@@ -66,7 +66,7 @@ void oled_spi_init(void){
     }
     else
     {
-        PRINTF("\r\nBaud rate in Hz is: %d\r\n", calculatedBaudRate);
+        PRINTF("- SPI: Baud rate in Hz is: %d\r\n", calculatedBaudRate);
     }
 
 
@@ -81,7 +81,7 @@ void oled_spi_init(void){
 	GPIO_DRV_SetPinOutput(kGpioRST);
     OSA_TimeDelay(1000);
 
-    PRINTF("SPI-OLED Init complete \n\r");
+    PRINTF("- SPI: OLED Init complete \n\r");
 }
 
 

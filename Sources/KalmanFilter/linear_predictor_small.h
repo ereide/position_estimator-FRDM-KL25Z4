@@ -8,6 +8,9 @@
 #ifndef SOURCES_LINEAR_PREDICTOR_H_
 #define SOURCES_LINEAR_PREDICTOR_H_
 
+#include "types.h"
+
+
 //#define USE_MEAN_TIME 1
 
 //Porbabilistic parameters
@@ -22,12 +25,6 @@ extern "C" {
 #endif
 
 
-typedef struct {
-	float pos;
-	float vel;
-	float acc;
-} state_t;
-
 
 void init_filters(float mod_acc_var, float obs_pos_var, float obs_acc_var);
 
@@ -40,8 +37,8 @@ void init_filters(float mod_acc_var, float obs_pos_var, float obs_acc_var);
     void predict(float dt);
 #endif //USE_MEAN_TIME
 
-void update_accel(float xdd, float ydd, float zdd);
-void update_pos(float x, float y, float z);
+void update_accel(acceleration_t *acc);
+void update_pos(position_t *pos);
 
 
 void getxState(state_t *state);

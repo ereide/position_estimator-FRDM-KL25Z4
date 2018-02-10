@@ -99,15 +99,15 @@ void predict(float dt){
 }
 #endif //USE_MEAN_TIME
 
-void update_accel(float xdd, float ydd, float zdd) {
-    kalman_x.update(xdd, H_acc, observation_acc_var);
-    kalman_y.update(ydd, H_acc, observation_acc_var);
-    kalman_z.update(zdd, H_acc, observation_acc_var);
+void update_accel(acceleration_t *acc) {
+    kalman_x.update(acc->x_acc, H_acc, observation_acc_var);
+    kalman_y.update(acc->y_acc, H_acc, observation_acc_var);
+    kalman_z.update(acc->z_acc, H_acc, observation_acc_var);
 }
 
-void update_pos(float x, float y, float z) {
-    kalman_x.update(x, H_pos, observation_pos_var);
-    kalman_y.update(y, H_pos, observation_pos_var);
-    kalman_z.update(z, H_pos, observation_pos_var);
+void update_pos(position_t *pos) {
+    kalman_x.update(pos->x	  , H_pos, observation_pos_var);
+    kalman_y.update(pos->y	  , H_pos, observation_pos_var);
+    kalman_z.update(pos->z	  , H_pos, observation_pos_var);
 }
 

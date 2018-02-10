@@ -20,14 +20,8 @@ void init_display(void){
 
 	//Startup screen
 	oled_display.begin();
-}
 
+	oled_display.fillScreen(WHITE);
 
-void draw_something(void){
-	oled_display.fillScreen(GREEN);
-}
-
-void draw_something_else(void){
-	oled_display.fillScreen(BLUE);
 }
 

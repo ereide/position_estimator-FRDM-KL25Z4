@@ -5,19 +5,15 @@
 extern "C" {
 #endif
 
-#include "ctype.h"
+#include "types.h"
 
-struct position {
-	float x;
-	float y;
-	float z;
-};
 
-void gps_init(void);
+
+void init_gps(void);
 
 void gps_setzero(void);
 
-char gps_read(void);
+bool gps_read(position_t* pos);
 
 
 

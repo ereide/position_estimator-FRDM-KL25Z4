@@ -1,7 +1,7 @@
 /*
  * Copyright 2018 Eivind Roson Eide
  *
- * Code based on Adafruit_GPS library
+ * Code adapted from Adafruit_GPS library
  */
 
 /***********************************
@@ -23,19 +23,7 @@ All text above must be included in any redistribution
 #include <gps_serial.h>
 
 
-// how long are max NMEA lines to parse?
-#define MAXLINELENGTH 120
-
-// we double buffer: read one line in and leave one for the main program
-volatile char line1[MAXLINELENGTH];
-volatile char line2[MAXLINELENGTH];
-// our index into filling the current line
-volatile uint8_t lineidx=0;
-// pointers to the double buffers
-volatile char *currentline;
-volatile char *lastline;
-volatile bool recvdflag;
-volatile bool inStandbyMode;
+//volatile bool inStandbyMode;
 
 
 // Constructor when using HardwareSerial
@@ -43,36 +31,6 @@ Adafruit_GPS::Adafruit_GPS() {
   common_init();  // Set everything to common state, then...
 }
 
-
-char Adafruit_GPS::read(void) {
-  char c = 0;
-
-  if (paused) return c;
-
-  //If we don't succeed reading a character return c = 0
-  if (! serial_read(&c)) return c;
-
-  if (c == '\n') {
-    currentline[lineidx] = 0;
-
-    if (currentline == line1) {
-      currentline = line2;
-      lastline = line1;
-    } else {
-      currentline = line1;
-      lastline = line2;
-    }
-
-    lineidx = 0;
-    recvdflag = true;
-  }
-
-  currentline[lineidx++] = c;
-  if (lineidx >= MAXLINELENGTH)
-    lineidx = MAXLINELENGTH-1;
-
-  return c;
-}
 
 void Adafruit_GPS::begin(uint32_t baud)
 {
@@ -324,12 +282,6 @@ bool Adafruit_GPS::parse(char *nmea) {
 
 // Initialization code used by all constructor types
 void Adafruit_GPS::common_init(void) {
-  recvdflag   = false;
-  paused      = false;
-  lineidx     = 0;
-  currentline = line1;
-  lastline    = line2;
-
   hour = minute = seconds = year = month = day =
     fixquality = satellites = 0; // uint8_t
   lat = lon = mag = 0; // char
@@ -344,9 +296,11 @@ bool Adafruit_GPS::newNMEAreceived(void) {
   return recvdflag;
 }
 
+/*
 void Adafruit_GPS::pause(bool p) {
   paused = p;
 }
+*/
 
 char *Adafruit_GPS::lastNMEA(void) {
   recvdflag = false;
@@ -367,12 +321,14 @@ uint8_t Adafruit_GPS::parseHex(char c) {
     return 0;
 }
 
+/*
+
 bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
   char str[20];
 
   uint8_t i=0;
   while (i < max) {
-    read();
+    //read();
 
     if (newNMEAreceived()) {
       char *nmea = lastNMEA();
@@ -387,7 +343,10 @@ bool Adafruit_GPS::waitForSentence(const char *wait4me, uint8_t max) {
 
   return false;
 }
+*/
 
+
+/*
 bool Adafruit_GPS::LOCUS_StartLogger(void) {
   sendCommand(PMTK_LOCUS_STARTLOG);
   recvdflag = false;
@@ -446,6 +405,10 @@ bool Adafruit_GPS::LOCUS_ReadStatus(void) {
   return true;
 }
 
+*/
+
+/*
+
 // Standby Mode Switches
 bool Adafruit_GPS::standby(void) {
   if (inStandbyMode) {
@@ -469,3 +432,5 @@ bool Adafruit_GPS::wakeup(void) {
       return false;  // Returns false if not in standby mode, nothing to wakeup
   }
 }
+
+*/

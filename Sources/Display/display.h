@@ -23,9 +23,6 @@ extern "C" {
 
 void init_display(void);
 
-void draw_something(void);
-void draw_something_else(void);
-
 
 #ifdef __cplusplus
 }

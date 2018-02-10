@@ -17,6 +17,14 @@
 extern "C" {
 #endif
 
+
+// pointer to the last line
+extern volatile char *lastline;
+
+// flag telling us if we have received a new message
+extern volatile bool recvdflag;
+
+
 //Inializes the serial interface
 void serial_init(uint32_t baud);
 
@@ -28,6 +36,8 @@ bool serial_read(char *c);
 
 //Sends a the chars stored in str[] and ends it with a newline
 void serial_println(const char *str);
+
+void print_last_NMEA(void);
 
 
 #ifdef __cplusplus

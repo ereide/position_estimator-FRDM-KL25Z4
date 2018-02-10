@@ -1,3 +1,12 @@
+
+/*
+ * Copyright 2018 Eivind Roson Eide
+ *
+ * Code adapted from Adafruit_GPS library
+ */
+
+
+
 /***********************************
 This is the Adafruit GPS library - the ultimate GPS library
 for the ultimate GPS module!
@@ -93,16 +102,16 @@ class Adafruit_GPS {
 
   void sendCommand(const char *);
 
-  void pause(bool b);
+  //void pause(bool b);
 
   bool parseNMEA(char *response);
   uint8_t parseHex(char c);
 
-  char read(void);
+  //char read(void);
   bool parse(char *);
 
-  bool wakeup(void);
-  bool standby(void);
+  //bool wakeup(void);
+  //bool standby(void);
 
   uint8_t hour, minute, seconds, year, month, day;
   uint16_t milliseconds;
@@ -119,13 +128,18 @@ class Adafruit_GPS {
   bool fix;
   uint8_t fixquality, satellites;
 
-  bool waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
+  //bool waitForSentence(const char *wait, uint8_t max = MAXWAITSENTENCE);
+  /*
+
   bool LOCUS_StartLogger(void);
   bool LOCUS_StopLogger(void);
   bool LOCUS_ReadStatus(void);
 
+
   uint16_t LOCUS_serial, LOCUS_records;
   uint8_t LOCUS_type, LOCUS_mode, LOCUS_config, LOCUS_interval, LOCUS_distance, LOCUS_speed, LOCUS_status, LOCUS_percent;
+  */
+
  private:
   bool paused;
 

@@ -1,6 +1,8 @@
 /*
  * gps.h
  *
+ * API for accessing the gps data and initializing the read procedure
+ *
  *  Created on: Dec 16, 2017
  *      Author: Eivind Roson Eide (c)
  */

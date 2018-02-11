@@ -4,7 +4,6 @@
  *  Created on: Feb 10, 2018
  *      Author: Eivind Roson Eide
  *
- *  Wrapper for the general accel library
  */
 
 #include "accelerometer.h"

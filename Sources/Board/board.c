@@ -1,4 +1,7 @@
 /*
+ * Copyright (c) 2018, Eivind Roson Eide
+ *
+ *
  * Copyright (c) 2013-2014, Freescale Semiconductor, Inc.
  * All rights reserved.
  *

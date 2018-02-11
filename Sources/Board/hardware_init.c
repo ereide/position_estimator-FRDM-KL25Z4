@@ -1,4 +1,7 @@
 /*
+ * Copyright (c) 2018, Eivind Roson Eide.
+ *
+ *
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * All rights reserved.
  *
@@ -41,13 +44,13 @@ static void tpm_mux_select(void){
 
 static void spi_oled_mux_select(void){
 	// Setup SPI1 pins for OLED
-	/*	KL25_SPI_MISO	--> PTA6	(ALT3)		*/
+	/*	KL25_SPI_MISO	--> PTD3	(ALT2)		*/
 	PORT_HAL_SetMuxMode(PORTD, 3u,  kPortMuxAlt2);
 
-	/*	KL25_SPI_MOSI	--> PTA8	(ALT3)		*/
+	/*	KL25_SPI_MOSI	--> PTD2	(ALT2)		*/
 	PORT_HAL_SetMuxMode(PORTD, 2u,  kPortMuxAlt2);
 
-	/*	KL25_SPI_SCK	--> PTA9	(ALT3)		*/
+	/*	KL25_SPI_SCK	--> PTD1	(ALT2)		*/
 	PORT_HAL_SetMuxMode(PORTD, 1u,  kPortMuxAlt2);
 
 	// Setup GPIO pins for OLED

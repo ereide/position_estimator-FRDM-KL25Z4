@@ -1,6 +1,8 @@
 /*
  * display.c
  *
+ *	API for displaying data on the display
+ *
  *  Created on: Feb 8, 2018
  *      Author: Eivind Roson Eide
  */
@@ -38,6 +40,8 @@
 #define OK_CHAR							"OK"
 #define ERR_CHAR						"NO"
 #define EMPTY_VAL						" "
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // MACROS
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,8 +99,15 @@ static void configure_print(void){
 
 	data_cursor_x = oled_display.getCursorX();
 	data_cursor_y = oled_display.getCursorY();
+
 	reset_cursor();
 }
+
+void display_fill_screen(void){
+	oled_display.fillScreen(WHITE);
+	reset_cursor();
+}
+
 
 void display_empty_screen(void){
 	oled_display.fillScreen(BLACK);

@@ -118,13 +118,16 @@ int main (void)
 	acceleration_t  acc;
 
 	init_all(&status);
-
 	display_write_text("Init complete \n");
 	display_write_text("Starts in 3 s \n");
 
-	OSA_TimeDelay(1000);
+	OSA_TimeDelay(2000);
+	display_fill_screen();
+	OSA_TimeDelay(2000);
 	display_empty_screen();
 	OSA_TimeDelay(2000);
+
+
 
 
     // Main loop.  Get sensor data and update duty cycle for the TPM timer.
@@ -168,7 +171,7 @@ int main (void)
         	getPosState(&pos);
 
         	//Displays the local coordinates and the status
-            display_write_local_coord(&status, &pos);
+            //display_write_local_coord(&status, &pos);
             // Print out the accelerometer data.
             display_write_data(&state);
 

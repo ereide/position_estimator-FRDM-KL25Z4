@@ -1,6 +1,8 @@
 /*
  * display.h
  *
+ * API for displaying data on the display
+ *
  *  Created on: Feb 8, 2018
  *      Author: Eivind Roson Eide
  */
@@ -12,6 +14,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Includes
@@ -34,17 +37,26 @@ extern "C" {
 #define WHITE           0xFFFF
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //  Function Prototypes
 ///////////////////////////////////////////////////////////////////////////////
 
 void init_display(sys_status_t* status);
+
 void display_empty_screen(void);
+
+void display_fill_screen(void);
+
+
 void display_write_text(char* str);
+
 void display_write_data(state_t* state);
+
 void display_write_local_coord(sys_status_t* status, position_t* pos);
+
 void display_write_state(sys_status_t* status);
+
+
 
 #ifdef __cplusplus
 }

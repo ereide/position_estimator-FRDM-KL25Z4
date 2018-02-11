@@ -1,6 +1,8 @@
 /*
  * predictor.h
  *
+ *	API for the underlying kalman filter
+ *
  *  Created on: Dec 16, 2017
  *      Author: Eivind Roson Eide (c)
  */

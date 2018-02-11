@@ -1,5 +1,7 @@
 /*
- * oled_spi.h
+ *  oled_spi.h
+ *
+ *	Low level driver for communicating over SPI
  *
  *  Created on: Feb 8, 2018
  *      Author: Eivind Roson Eide

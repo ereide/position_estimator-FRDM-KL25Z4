@@ -1,8 +1,10 @@
 /*
  * accelerometer.h
  *
+ *	API for accessing the accelerometer data
+ *
  *  Created on: Feb 10, 2018
- *      Author: eivind
+ *      Author: Eivind Roson Eide
  */
 
 #ifndef ACCELEROMETER_H_

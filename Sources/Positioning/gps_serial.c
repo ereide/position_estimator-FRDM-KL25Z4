@@ -58,10 +58,6 @@ static uart_user_config_t uartConfig = {
 static void serial_callback(uint32_t instance, void * uartState){
 	char c = (char)(rxBuff[0]);
 
-	//PRINTF("%c", c);
-
-	//return;
-
 	if (c == '\n') {
 		currentline[lineidx] = 0;
 

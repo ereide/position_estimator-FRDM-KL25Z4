@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2018, Eivind Roson Eide
  *
- * Parts of the code is borrowed from Freescale semiconductors
  */
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
+#include <predictor.h>
 #include <string.h>
 // SDK Included Files
 #include "board.h"
@@ -19,7 +19,6 @@
 
 //Include modules
 #include "accelerometer.h"
-#include "linear_predictor_small.h"
 #include "gps.h"
 #include "display.h"
 
@@ -27,7 +26,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Defines
 ////////////////////////////////////////////////////////////////////////////////
-#define UPDATE_RATE_MS	10 //1/frequency in milli seconds
+#define UPDATE_RATE_MS			10 						  //frequency in milli seconds
+
+#define SCREEN_CYCLE_NUMBER		100						  //how often we update state on the screen
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -53,7 +54,7 @@ void init_system(void) {
 }
 
 
-void init_all(void){
+static void init_all(sys_status_t* status){
 	//Initialize system drivers
     PRINTF("\n\rSystem setup: \r\n");
 	init_system();
@@ -63,29 +64,33 @@ void init_all(void){
 
 	//Initialize OLED screen
 	PRINTF("OLED SSD1331 setup:\n\r");
-	init_display();
+	init_display(status);
 	PRINTF("OLED SSD1331 setup complete! \n\r\n\r");
 	OSA_TimeDelay(100);
 
+
+
 	//Initialize Accelerometer module
 	PRINTF("Accelerometer setup: \n\r");
-	init_accel();
+	init_accel(status);
     PRINTF("Accelerometer setup complete!\r\n\n\r");
 	OSA_TimeDelay(100);
 
 
 	//Initialize GPS module
     PRINTF("GPS setup:\r\n");
-	init_gps();
+	init_gps(status);
     PRINTF("GPS setup complete!\r\n\n\r");
 	OSA_TimeDelay(100);
 
 
 	//Init kalman filters
     PRINTF("Kalman Filter setup:\r\n\r\n");
-	init_filters(MODEL_ACCEL_VAR, OBSERVATION_POS_VAR, OBSERVATION_ACCEL_VAR);
+	init_filters(MODEL_ACCEL_VAR, OBSERVATION_POS_VAR, OBSERVATION_VEL_VAR, OBSERVATION_ACCEL_VAR);
     PRINTF("Kalman Filter setup complete!\r\n\r\n");
 	OSA_TimeDelay(100);
+
+
 
 	PRINTF("All systems ready to go! \n\r");
 
@@ -97,57 +102,85 @@ void init_all(void){
  */
 int main (void)
 {
+	sys_status_t status = {
+		.gps_com 		= false,
+		.accel_com 		= false,
+		.gps_fix    	= false,
+		.display_com 	= false
+	};
+
+	uint16_t screen_cycle = 0;
 
 	state_t state;
 
-
 	position_t 		pos;
+	velocity_t      vel;
 	acceleration_t  acc;
 
+	init_all(&status);
 
-	init_all();
+	display_write_text("Init complete \n");
+	display_write_text("Starts in 3 s \n");
 
+	OSA_TimeDelay(1000);
+	display_empty_screen();
+	OSA_TimeDelay(2000);
 
 
     // Main loop.  Get sensor data and update duty cycle for the TPM timer.
     while(1)
     {
         // Wait UPDATE_RATE_MS in between updates (accelerometer updates at 200Hz, GPS at 5Hz).
-        OSA_TimeDelay(UPDATE_RATE_MS);
-
     	//Toggles Green LED ON and OFF
 		LED_toggle_master();
-
-
-        PRINTF("Reading data\r\n");
-
-
 
         predict();
 
         //Look for new accelerometer data
-        if(get_accel_data(&acc)) {
+        if(get_z_accel(&acc)) {
         	update_accel(&acc);
-            PRINTF("Converted Accel: x= %de-3 y = %de-3 z = %de-3\r\n", (int16_t)(acc.x_acc*1000), (int16_t)(acc.y_acc*1000), (int16_t)(acc.z_acc*1000));
+        	status.accel_com = true;
+            //PRINTF("Converted Accel: x= %de-3 y = %de-3 z = %de-3\r\n", (int16_t)(acc.x_acc*1000), (int16_t)(acc.y_acc*1000), (int16_t)(acc.z_acc*1000));
+        }
+
+        else {
+        	status.accel_com = false;
         }
 
 
         //Look for new GPS data
-		if(gps_read(&pos)) {
+		if(gps_read(&pos, &vel, &status)) {
 	        update_pos(&pos);
+	        update_vel(&vel);
 	        PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int16_t)(pos.x*1000), (int16_t)(pos.y*1000), (int16_t)(pos.z*1000));
-
-
 		}
 
 
-		//Read state
-        getzState(&state);
 
-        // Print out the accelerometer data.
+        if (screen_cycle < SCREEN_CYCLE_NUMBER) {
+        	screen_cycle += 1;
+		}
+        else{
+        	screen_cycle = 0;
+    		//Read state
 
-        PRINTF("State:        	 z= %de-3 v = %de-3 a = %de-3\r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000));
+        	getzState(&state);
+        	getPosState(&pos);
+
+        	//Displays the local coordinates and the status
+            display_write_local_coord(&status, &pos);
+            // Print out the accelerometer data.
+            display_write_data(&state);
+
+            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3\r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000));
+        }
+
+
+        OSA_TimeDelay(UPDATE_RATE_MS);
+
+
     }
+
 
 
 	while(1){
@@ -158,5 +191,7 @@ int main (void)
 		LED_toggle_master();
 
 	}
+
+    return 0;
 
 }

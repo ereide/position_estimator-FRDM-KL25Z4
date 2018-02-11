@@ -12,12 +12,19 @@
 extern "C" {
 #endif
 
+#include "stdbool.h"
 
 typedef struct {
-	float x;
-	float y;
-	float z;
+	float x;	//East
+	float y;	//North
+	float z;	//Up
 } position_t;
+
+typedef struct {
+	float x_vel; //East
+	float y_vel; //North
+	float z_vel; //Up
+} velocity_t;
 
 
 typedef struct {
@@ -33,6 +40,13 @@ typedef struct {
 	float acc;
 } state_t;
 
+
+typedef struct {
+	bool gps_com;
+	bool gps_fix;
+	bool accel_com;
+	bool display_com;
+} sys_status_t;
 
 #ifdef __cplusplus
 }

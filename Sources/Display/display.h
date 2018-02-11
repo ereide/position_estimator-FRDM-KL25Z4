@@ -5,12 +5,24 @@
  *      Author: Eivind Roson Eide
  */
 
+
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+///////////////////////////////////////////////////////////////////////////////
+//  Includes
+///////////////////////////////////////////////////////////////////////////////
+
+#include "types.h"
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Defines
+////////////////////////////////////////////////////////////////////////////////
 
 #define	BLACK           0x0000
 #define	BLUE            0x001F
@@ -21,8 +33,18 @@ extern "C" {
 #define YELLOW          0xFFE0
 #define WHITE           0xFFFF
 
-void init_display(void);
 
+
+///////////////////////////////////////////////////////////////////////////////
+//  Function Prototypes
+///////////////////////////////////////////////////////////////////////////////
+
+void init_display(sys_status_t* status);
+void display_empty_screen(void);
+void display_write_text(char* str);
+void display_write_data(state_t* state);
+void display_write_local_coord(sys_status_t* status, position_t* pos);
+void display_write_state(sys_status_t* status);
 
 #ifdef __cplusplus
 }

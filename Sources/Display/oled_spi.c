@@ -109,8 +109,6 @@ void oled_writeData(uint8_t dataByte){
 	/*
 	 *	DC (PTB13) High
 	 *
-	 *	TODO: Should it be digitalWrite(_rs, LOW)?
-	 *
 	 */
 	GPIO_DRV_SetPinOutput(kGpioDC);
 

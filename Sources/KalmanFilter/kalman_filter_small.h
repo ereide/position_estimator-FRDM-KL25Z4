@@ -1,6 +1,6 @@
 #include <Eigen/Dense>
 
-#define INITIAL_STATE_VAR    0xFFFF
+#define INITIAL_STATE_VAR    1000000; //Some very large number
 
 #define STATE_NUMB 3 //x, dx/dt, d^2x/dt^2
 

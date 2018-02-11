@@ -13,9 +13,13 @@
 
 #include "types.h"
 
-void init_accel(void);
+void init_accel(sys_status_t* status);
 
+//Extracts pure acceleration data without taking into account gravity
 bool get_accel_data(acceleration_t *acc);
+
+//Extracts corrected acceleration data assuming no acceleration in x and y direction
+bool get_z_accel(acceleration_t* acc);
 
 
 #endif /* ACCELEROMETER_H_ */

@@ -93,9 +93,12 @@ static void configure_print(void){
 
 	//Finds the location of the third line
 	oled_display.write('\n');
-	oled_display.write('\n');
-	oled_display.write('\n');
-	oled_display.write('\n');
+
+	oled_display.write('B');
+
+	//oled_display.write('\n');
+	//oled_display.write('\n');
+	//oled_display.write('\n');
 
 	data_cursor_x = oled_display.getCursorX();
 	data_cursor_y = oled_display.getCursorY();
@@ -124,7 +127,6 @@ void init_display(sys_status_t* status){
 	oled_display.fillScreen(BLACK);
 
 	configure_print();
-
 }
 
 
@@ -196,5 +198,9 @@ void display_write_data(state_t* state){
 	float_to_str(state->acc, &val, &pres);
 	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "a=%3d.%2d \n", val, pres);
 	display_write_text(output_str);
+}
+
+void display_test_char(){
+	oled_display.drawChar(oled_display.width()/2, oled_display.height()/2, 'A', WHITE, BLACK, 3);
 }
 

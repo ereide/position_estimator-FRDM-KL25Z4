@@ -14,6 +14,9 @@ extern "C" {
 
 #include <stdint.h>
 
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
+
 
 void float_to_str(float f, int16_t* val, uint16_t* pres);
 

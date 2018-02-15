@@ -110,11 +110,10 @@ void hardware_init(void) {
 	//Set SPI pins for communicating with OLED screen
 	spi_oled_mux_select();
 
-	/* Select the clock source for the TPM counter */
-	CLOCK_SYS_SetTpmSrc(2u, kClockTpmSrcPllFllSel);
-
-	/* Init board clock */
+	// Init board clock
 	BOARD_ClockInit();
+
+	//Init serial communication with computer
 	dbg_uart_init();
 
     GPIO_DRV_Init(0, outputPins);

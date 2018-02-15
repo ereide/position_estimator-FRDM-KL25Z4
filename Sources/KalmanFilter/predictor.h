@@ -13,7 +13,7 @@
 #include "types.h"
 
 
-//#define USE_MEAN_TIME 1
+//#define USE_MEAN_TIME 0
 
 //Porbabilistic parameters
 #define MODEL_ACCEL_VAR               1			//(m/s^2)^2
@@ -34,8 +34,6 @@ extern "C" {
 
 
 void init_filters(float mod_acc_var, float obs_pos_var, float obs_vel_var,  float obs_acc_var);
-
-#define USE_MEAN_TIME 1
 
 #ifdef USE_MEAN_TIME
     void predict(void);

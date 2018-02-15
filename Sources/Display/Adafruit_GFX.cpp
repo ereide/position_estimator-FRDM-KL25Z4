@@ -807,7 +807,6 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 
 void Adafruit_GFX::write(uint8_t c) {
     if(!gfxFont) { // 'Classic' built-in font
-
         if(c == '\n') {                        // Newline?
             cursor_x  = 0;                     // Reset x to zero,
             cursor_y += textsize * 8;          // advance y one line
@@ -845,7 +844,6 @@ void Adafruit_GFX::write(uint8_t c) {
                 cursor_x += (uint8_t)pgm_read_byte(&glyph->xAdvance) * (int16_t)textsize;
             }
         }
-
     }
 }
 

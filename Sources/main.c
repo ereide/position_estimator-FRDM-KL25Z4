@@ -7,15 +7,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 //  Includes
 ///////////////////////////////////////////////////////////////////////////////
+
+//Included files from std
 #include <predictor.h>
 #include <string.h>
-// SDK Included Files
+
+//Included board configuration
 #include "board.h"
-#include "fsl_tpm_driver.h"
+
+// SDK Included Files
 #include "fsl_debug_console.h"
+#include "fsl_clock_manager.h"
 
 //Include utilities/types.h for data passing
 #include "types.h"
+
+//Include utility functions
+//#include "utils.h"
 
 //Include modules
 #include "accelerometer.h"
@@ -26,13 +34,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Defines
 ////////////////////////////////////////////////////////////////////////////////
-#define UPDATE_RATE_MS			10 						  //frequency in milli seconds
+#define UPDATE_RATE_TARGET_MS	10 					  //target frequency in seconds
 
-#define SCREEN_CYCLE_NUMBER		100						  //how often we update state on the screen
+#define SCREEN_CYCLE_NUMBER		10						  //how often we update state on the screen
+#define RTC_INSTANCE      		BOARD_RTC_FUNC_INSTANCE
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
+
+uint32_t last_time;
+
 
 static void LED_toggle_master(void)
 {
@@ -50,13 +65,12 @@ void init_system(void) {
     OSA_Init();
 
     OSA_TimeDelay(5);
-
 }
 
 
 static void init_all(sys_status_t* status){
 	//Initialize system drivers
-    PRINTF("\n\rSystem setup: \r\n");
+    PRINTF("\n\r\n\rSystem setup: \r\n");
 	init_system();
     PRINTF("System setup complete!\r\n\n\r");
 	OSA_TimeDelay(100);
@@ -90,18 +104,42 @@ static void init_all(sys_status_t* status){
     PRINTF("Kalman Filter setup complete!\r\n\r\n");
 	OSA_TimeDelay(100);
 
-
-
 	PRINTF("All systems ready to go! \n\r");
 
 }
 
+
+uint32_t get_time_diff(void){
+	uint32_t new_time;
+	uint32_t diff;
+
+	//Read the new time
+	new_time = OSA_TimeGetMsec(); //ms
+
+	//Calculate difference since last reading
+	diff = new_time - last_time;
+
+	//Update the last time reading to the new reading
+	last_time = new_time;
+
+	//Return the difference
+	return diff;
+}
+
+inline void start_timer(void){
+	last_time = OSA_TimeGetMsec();
+}
+
+inline float msec_to_float(uint32_t milli_sec){
+	return ((float)milli_sec)*0.001;
+}
 
 /*!
  * @brief Main demo function.
  */
 int main (void)
 {
+	//This variable will keep track of the
 	sys_status_t status = {
 		.gps_com 		= false,
 		.accel_com 		= false,
@@ -111,24 +149,32 @@ int main (void)
 
 	uint16_t screen_cycle = 0;
 
+	//Initiate state struct
 	state_t state;
 
+	//Ininitiate navigation structs
 	position_t 		pos;
 	velocity_t      vel;
 	acceleration_t  acc;
 
+	uint32_t dt;
+
 	init_all(&status);
-	display_write_text("Init complete \n");
-	display_write_text("Starts in 3 s \n");
+
+	display_test_char();
 
 	OSA_TimeDelay(2000);
-	display_fill_screen();
-	OSA_TimeDelay(2000);
+
+	display_write_text("Init complete \n");
+
+	display_write_text("Starts in 3 s \n");
+
+	OSA_TimeDelay(1000);
 	display_empty_screen();
 	OSA_TimeDelay(2000);
 
-
-
+	//Start timer -> Should be the last thing before starting prediction
+	start_timer();
 
     // Main loop.  Get sensor data and update duty cycle for the TPM timer.
     while(1)
@@ -137,7 +183,8 @@ int main (void)
     	//Toggles Green LED ON and OFF
 		LED_toggle_master();
 
-        predict();
+		dt = get_time_diff();
+        predict(msec_to_float(dt));
 
         //Look for new accelerometer data
         if(get_z_accel(&acc)) {
@@ -175,26 +222,31 @@ int main (void)
             // Print out the accelerometer data.
             display_write_data(&state);
 
-            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3\r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000));
+            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000), dt);
         }
 
 
-        OSA_TimeDelay(UPDATE_RATE_MS);
+        if(UPDATE_RATE_TARGET_MS > dt){
+            OSA_TimeDelay(UPDATE_RATE_TARGET_MS - dt + 1); // Wait for the ramaining time + 1 ms
 
-
+        }
     }
 
 
 
+    /*
 	while(1){
+
         // Wait UPDATE_RATE_MS in between updates (accelerometer updates at 200Hz, GPS at 5Hz).
         OSA_TimeDelay(UPDATE_RATE_MS);
 
     	//Toggles Green LED ON and OFF
 		LED_toggle_master();
 
+		PRINTF("Time since last reading: %d \n\r", (int16_t)(1000*msec_to_float(get_time_diff())));
 	}
 
+    */
     return 0;
 
 }

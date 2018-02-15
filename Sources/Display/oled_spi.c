@@ -17,7 +17,7 @@
 #define SPI_MASTER_INSTANCE         BOARD_SPI_INSTANCE  /*! User change define to choose SPI instance */
 #define TRANSFER_SIZE               (1)
 #define TRANSFER_BAUDRATE           (500000U)           /*! Transfer baudrate - 500k */
-#define MASTER_TRANSFER_TIMEOUT     (1000U)             /*! Transfer timeout of master - 5s */
+#define MASTER_TRANSFER_TIMEOUT     (1000U)             /*! Transfer timeout of master - 10ms */
 
 
 

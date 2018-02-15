@@ -57,6 +57,8 @@ void display_write_state(sys_status_t* status);
 
 void display_test_char();
 
+void display_test_write();
+
 
 #ifdef __cplusplus
 }

@@ -34,7 +34,7 @@
 #define DISPLAY_TEXT_SIZE 				1u
 #define DISPLAY_TEXT_COLOR  			WHITE
 #define DISPLAY_BACKGROUND_COLOR 		BLACK
-#define DISPLAY_TEXT_WRAP				0
+#define DISPLAY_TEXT_WRAP				false
 
 
 #define OK_CHAR							"OK"
@@ -68,7 +68,7 @@ int16_t data_cursor_x, data_cursor_y;
 
 static void reset_cursor(void){
 	int16_t x0 = 0; //oled_display.width()/16;
-	int16_t y0 = oled_display.height();
+	int16_t y0 = 0; //oled_display.height() / 16;
 	oled_display.setCursor(x0, y0);
 }
 
@@ -83,22 +83,22 @@ static void reset_cursor_status(void){
 static void configure_print(void){
 
 	//Sets font to default
-	oled_display.setFont();
+	//oled_display.setFont();
 
-	reset_cursor();
-
+	oled_display.setCursor(0, 0);
 	oled_display.setTextColor(DISPLAY_TEXT_COLOR, DISPLAY_BACKGROUND_COLOR);
 	oled_display.setTextSize(DISPLAY_TEXT_SIZE);
 	oled_display.setTextWrap(DISPLAY_TEXT_WRAP);
+}
 
-	//Finds the location of the third line
+static void configure_cursor(void){
+	reset_cursor();
+
+	//Finds the location of the fourth line
 	oled_display.write('\n');
-
-	oled_display.write('B');
-
-	//oled_display.write('\n');
-	//oled_display.write('\n');
-	//oled_display.write('\n');
+	oled_display.write('\n');
+	oled_display.write('\n');
+	oled_display.write('\n');
 
 	data_cursor_x = oled_display.getCursorX();
 	data_cursor_y = oled_display.getCursorY();
@@ -127,6 +127,9 @@ void init_display(sys_status_t* status){
 	oled_display.fillScreen(BLACK);
 
 	configure_print();
+
+	configure_cursor();
+
 }
 
 
@@ -200,7 +203,14 @@ void display_write_data(state_t* state){
 	display_write_text(output_str);
 }
 
+
+//To test that the module is working
 void display_test_char(){
 	oled_display.drawChar(oled_display.width()/2, oled_display.height()/2, 'A', WHITE, BLACK, 3);
 }
 
+void display_test_write(){
+	oled_display.write('H');
+	oled_display.write('E');
+	oled_display.write('I');
+}

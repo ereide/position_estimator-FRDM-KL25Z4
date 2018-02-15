@@ -19,7 +19,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_clock_manager.h"
 
-//Include utilities/types.h for data passing
+//Include Common/types.h for data passing
 #include "types.h"
 
 //Include utility functions
@@ -108,7 +108,7 @@ static void init_all(sys_status_t* status){
 
 }
 
-
+//Does update last time as well as returning difference
 uint32_t get_time_diff(void){
 	uint32_t new_time;
 	uint32_t diff;
@@ -124,6 +124,11 @@ uint32_t get_time_diff(void){
 
 	//Return the difference
 	return diff;
+}
+
+//Does not update last time, bur returns difference
+uint32_t get_elapsed_time(void){
+	return OSA_TimeGetMsec() - last_time;
 }
 
 inline void start_timer(void){
@@ -161,12 +166,9 @@ int main (void)
 
 	init_all(&status);
 
-	display_test_char();
-
 	OSA_TimeDelay(2000);
 
 	display_write_text("Init complete \n");
-
 	display_write_text("Starts in 3 s \n");
 
 	OSA_TimeDelay(1000);
@@ -218,13 +220,14 @@ int main (void)
         	getPosState(&pos);
 
         	//Displays the local coordinates and the status
-            //display_write_local_coord(&status, &pos);
+            display_write_local_coord(&status, &pos);
             // Print out the accelerometer data.
             display_write_data(&state);
 
             PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000), dt);
         }
 
+        dt = get_elapsed_time();
 
         if(UPDATE_RATE_TARGET_MS > dt){
             OSA_TimeDelay(UPDATE_RATE_TARGET_MS - dt + 1); // Wait for the ramaining time + 1 ms

@@ -40,7 +40,7 @@ static StateCovarianceMatrix create1DModelCovariance(float dt){
             dt_3/2,   dt_2,     dt,
             dt_2/2,     dt,      1;
 
-    return Q*model_acc_var;
+    return Q*model_acc_var + StateCovarianceMatrix::Identity()*MODEL_NUMERICAL_ACCEL_VAR;
 } 
 
 static void getState(KalmanFilter& filter, state_t *state){

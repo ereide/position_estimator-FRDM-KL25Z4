@@ -203,7 +203,7 @@ int main (void)
         //Look for new GPS data
 		if(gps_read(&pos, &vel, &status)) {
 	        update_pos(&pos);
-	        update_vel(&vel);
+	        //update_vel(&vel);
 	        PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int16_t)(pos.x*1000), (int16_t)(pos.y*1000), (int16_t)(pos.z*1000));
 		}
 

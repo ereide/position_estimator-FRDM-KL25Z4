@@ -132,7 +132,7 @@ void init_display(sys_status_t* status){
 
 }
 
-
+//Interface for writing a string to the display
 void display_write_text(char* str){
 
 	size_t n = strlen(str);
@@ -147,6 +147,8 @@ void display_write_text(char* str){
 	return;
 }
 
+
+//Function for displaying the latest status data
 void display_write_state(sys_status_t* status){
 
 	//Set cursor to the top again
@@ -163,6 +165,7 @@ void display_write_state(sys_status_t* status){
 
 }
 
+//Function for displaying latest position data
 void display_write_local_coord(sys_status_t* status, position_t* pos){
 	display_write_state(status);
 
@@ -181,6 +184,7 @@ void display_write_local_coord(sys_status_t* status, position_t* pos){
 
 }
 
+//Function for displaying the latest altitude data
 void display_write_data(state_t* state){
 	int16_t val;
 	uint16_t pres;
@@ -212,5 +216,5 @@ void display_test_char(){
 void display_test_write(){
 	oled_display.write('H');
 	oled_display.write('E');
-	oled_display.write('I');
+	oled_display.write('Y');
 }

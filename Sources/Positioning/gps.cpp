@@ -28,11 +28,17 @@ static float deg_to_rad(float deg){
 	return M_PI*deg/180;
 }
 
-static void gps_set_zero(int32_t longtitude_Fixed, int32_t latitude_Fixed){
-	zero_latitude_fixed  = latitude_Fixed;
-	zero_longitude_fixed = longtitude_Fixed;
+static float fixed_to_float(int32_t deg_fixed){
+	return (float)(deg_fixed)/LAT_FIXED_PRECISSION;
+}
 
-	float latitude = (float)(latitude_Fixed)/LAT_FIXED_PRECISSION;
+//Uses the first fix reading as the origin, and uses this value to compute the
+//conversion factor from degrees to local coordinates
+static void gps_set_zero(int32_t longitude_Fixed, int32_t latitude_Fixed){
+	zero_latitude_fixed  = latitude_Fixed;
+	zero_longitude_fixed = longitude_Fixed;
+
+	float latitude = fixed_to_float(latitude_Fixed);
 	float rad_lat  = deg_to_rad(latitude);
 
 	m_per_deg_lat = 111132.954 - 559.822 * cos( 2 * rad_lat) + 1.175 * cos( 4 * rad_lat);
@@ -41,29 +47,35 @@ static void gps_set_zero(int32_t longtitude_Fixed, int32_t latitude_Fixed){
 }
 
 
+//Converts the fixed latitude value to local coordinates accounting for origin
 static float latitude_to_local(int32_t latitude_Fixed){
-	return (float)(m_per_deg_lat * (latitude_Fixed - zero_latitude_fixed));
+	return (m_per_deg_lat * fixed_to_float(latitude_Fixed - zero_latitude_fixed));
 }
 
-static float longtitude_to_local(int32_t longtitude_Fixed){
-	return (float)(m_per_deg_lon * (longtitude_Fixed - zero_longitude_fixed));
+//Converts the fixed longitude value to local coordinates accounting for origin
+static float longitude_to_local(int32_t longitude_Fixed){
+	return (m_per_deg_lon * fixed_to_float(longitude_Fixed - zero_longitude_fixed));
 }
 
 static float altitude_to_local(float altitude){
 	return altitude - zero_altitude;
 }
 
+//Converts geographical coordinates to a local coordinate system
 static void fill_pos(position_t* pos){
-	pos->x = longtitude_to_local(GPS.longitude_fixed);  //EAST
+	pos->x = longitude_to_local(GPS.longitude_fixed);   //East
 	pos->y = latitude_to_local(GPS.latitude_fixed); 	//North
 	pos->z = altitude_to_local(GPS.altitude);			//UP
 }
 
+//Converts velocity and heading to local coordinates
 static void fill_vel(velocity_t* vel){
 	float heading = deg_to_rad(GPS.angle);
 	float speed = GPS.speed;
-	vel->x_vel = speed * sin(heading);
-	vel->y_vel = speed * cos(heading);
+	vel->x_vel = speed * sin(heading); 					//East
+	vel->y_vel = speed * cos(heading);					//North
+
+	//No information about velocity in z direction
 }
 
 
@@ -71,7 +83,7 @@ void init_gps(sys_status_t* status){
 	GPS.begin(9600);
 
 	//Set output to be minimum required
-	GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCONLY);
+	GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
 	serial_delay(10);
 
 
@@ -84,6 +96,7 @@ void init_gps(sys_status_t* status){
 	GPS.sendCommand(PMTK_API_SET_FIX_CTL_5HZ);
 	serial_delay(10);
 
+	//Communication is OK, FIX is starts as false
 	status->gps_com = true;
 	status->gps_fix = false;
 
@@ -92,12 +105,19 @@ void init_gps(sys_status_t* status){
 }
 
 
-
+//Interface for reading position and velocity data
 bool gps_read(position_t* pos, velocity_t* vel, sys_status_t* status){
+	//Check if we have a new complete NMEA message
 	if (GPS.newNMEAreceived()) {
+		//Parse this message
 		GPS.parse(GPS.lastNMEA());
 
+		//print_last_NMEA();
+
+		//If we have a valid fix update the data
 		if (GPS.fix) {
+
+			//Set zero if not done already
 			if (!has_zero) {
 				gps_set_zero(GPS.longitude_fixed, GPS.latitude_fixed);
 			}
@@ -108,6 +128,7 @@ bool gps_read(position_t* pos, velocity_t* vel, sys_status_t* status){
 			//Fill the velocity struct
 			fill_vel(vel);
 
+			//Set the fix flag
 			status->gps_fix = true;
 
 			return true;

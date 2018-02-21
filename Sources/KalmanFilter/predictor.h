@@ -20,11 +20,9 @@
 #define MODEL_NUMERICAL_ACCEL_VAR	  0.0000001
 
 
-#define OBSERVATION_POS_VAR           1			//m^2
+#define OBSERVATION_POS_VAR           0.1		//m^2
 #define OBSERVATION_VEL_VAR           0.1		//(m/s)^2
-
 #define OBSERVATION_ACCEL_VAR         0.1		//(m/s^2)^2
-
 #define PREDICTOR_MEAN_TIME_DELAY     0.01		//s
 
 //Set to 1 if we expect acceleration to be approximately constant over time
@@ -52,9 +50,15 @@ void update_vel(velocity_t *vel);
 void update_pos(position_t *pos);
 
 
-void getxState(state_t *state);
-void getyState(state_t *state);
+//void getxState(state_t *state);
+//void getxVar(state_t *state);
+
+//void getyState(state_t *state);
+//void getyVar(state_t *state);
+
 void getzState(state_t *state);
+void getzVar(state_t *state);
+
 
 void getPosState(position_t* pos);
 

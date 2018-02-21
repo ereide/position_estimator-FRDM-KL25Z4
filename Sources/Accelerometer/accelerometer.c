@@ -39,16 +39,19 @@ static accel_sensor_data_t accelData;
 
 static float gravity_magnitude;
 
+//Converts reading to m/s^2
 static float accel_conversion(int16_t data){
 	return data*(float)GRAVITY_ACCELERATION/(float)ACCEL_MMA8451_4G_COUNTS_PER_G;
 }
 
+//Finds the magnitude
 static float accel_magnitude(acceleration_t* acc){
 	return sqrtf(acc->x_acc * acc->x_acc +
 				 acc->y_acc * acc->y_acc +
 				 acc->z_acc * acc->z_acc);
 }
 
+//Initialize the
 static void init_accel_com(void){
     // Register callback func for I2C
     i2cInterface.i2c_init       =  I2C_DRV_MasterInit;
@@ -68,6 +71,7 @@ static void init_accel_com(void){
 
 }
 
+//Average readings to find gravitational acceleratin
 void accel_set_zero(void){
 	acceleration_t temp_accel;
 	for (uint16_t i = 0; i < ACCEL_AVERAGE_N; ++i) {
@@ -85,7 +89,7 @@ void accel_set_zero(void){
 	PRINTF("- ACCEL: Gravity constant calculated to %d.%2d \n\r", val, pres);
 }
 
-
+//initialize the system
 void init_accel(sys_status_t* status){
 	//setup communication
 	init_accel_com();
@@ -97,7 +101,9 @@ void init_accel(sys_status_t* status){
 }
 
 
-
+/*
+ * Gets the actual data from the accelerometer
+ */
 bool get_accel_data(acceleration_t *acc){
     // Get new accelerometer data.
 
@@ -133,7 +139,7 @@ bool get_accel_data(acceleration_t *acc){
  *
  * Corrects for orientation error by assuming x and y acceleration is 0.
  *
- * Returns true if reading was succesful
+ * Returns true if reading was successful
  */
 bool get_z_accel(acceleration_t* acc){
 	bool retVal = get_accel_data(acc);
@@ -142,7 +148,7 @@ bool get_z_accel(acceleration_t* acc){
 
 	acc->x_acc = 0;
 	acc->y_acc = 0;
-	acc->z_acc = mag - gravity_magnitude; //Assumes the acceleration in x and y direction is negligible
+	acc->z_acc = -(mag - gravity_magnitude); //Assumes the acceleration in x and y direction is negligible. Negative gravity pointing down
 
 	return retVal;
 }

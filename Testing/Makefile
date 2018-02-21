@@ -9,7 +9,7 @@ SRC=.
 BIN=bin
 
 PROJECT_SRC=../Sources
-EIGEN_PATH=../External/Eigen
+EIGEN_PATH=../External/eigen/
 
 
 # Files

@@ -40,7 +40,7 @@ static StateCovarianceMatrix create1DModelCovariance(float dt){
             dt_3/2,   dt_2,     dt,
             dt_2/2,     dt,      1;
 
-    return Q*model_acc_var + StateCovarianceMatrix::Identity()*MODEL_NUMERICAL_ACCEL_VAR;
+    return Q*model_acc_var; // + StateCovarianceMatrix::Identity()*MODEL_NUMERICAL_ACCEL_VAR;
 } 
 
 static void getState(KalmanFilter& filter, state_t *state){
@@ -50,6 +50,17 @@ static void getState(KalmanFilter& filter, state_t *state){
     state->vel = x(1);
     state->acc = x(2);
 } 
+
+static void getVar(KalmanFilter& filter, state_t *state){
+    StateCovarianceMatrix x = filter.getStateCovarianceMatrix();
+
+    state->pos = x(0, 0);
+    state->vel = x(1, 1);
+    state->acc = x(2, 2);
+}
+
+
+
 
 /*
 void getxState(state_t *state){
@@ -64,6 +75,10 @@ void getyState(state_t *state){
 
 void getzState(state_t *state){
     getState(kalman_z, state);
+}
+
+void getzVar(state_t *state){
+    getVar(kalman_z, state);
 }
 
 void getPosState(position_t* pos){

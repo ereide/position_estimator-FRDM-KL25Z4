@@ -54,7 +54,7 @@ static uart_user_config_t uartConfig = {
 
 
 
-
+//Callback function for the interrupt to deal with the double buffering index.
 static void serial_callback(uint32_t instance, void * uartState){
 	char c = (char)(rxBuff[0]);
 
@@ -85,6 +85,7 @@ static void serial_callback(uint32_t instance, void * uartState){
 
 }
 
+//Setup static variables
 static void gps_read_init(void){
   recvdflag   = false;
   lineidx     = 0;
@@ -92,7 +93,7 @@ static void gps_read_init(void){
   lastline    = line2;
 }
 
-
+//Install the callback function
 static void install_callback(void){
 	UART_DRV_InstallRxCallback(GPS_UART_INSTANCE, &serial_callback, (uint8_t*)rxBuff, &uartState, true);
 }
@@ -102,6 +103,7 @@ void serial_delay(uint32_t milli){
 }
 
 
+//Initialization function for the serial communication
 void serial_init(uint32_t baud){
 
 	CLOCK_SYS_EnableUartClock(GPS_UART_INSTANCE);
@@ -118,13 +120,13 @@ void serial_init(uint32_t baud){
 	PRINTF("- GPS: Interrupt setup complete. \n\r");
 }
 
-
+//Prints the last received NMEA message
 void print_last_NMEA(void){
 	PRINTF(lastline);
 	PRINTF("\n\r");
 }
 
-
+//Write a string over serial
 void serial_println(const char *str){
 	//Determine size of array
 	size_t n = strlen(str);

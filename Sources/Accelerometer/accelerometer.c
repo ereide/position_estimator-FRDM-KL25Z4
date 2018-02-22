@@ -84,7 +84,8 @@ void accel_set_zero(void){
 
 	int16_t val;
 	uint16_t pres;
-	float_to_str(gravity_magnitude, &val, &pres);
+	char sign;
+	float_to_str(gravity_magnitude, &sign, &val, &pres);
 
 	PRINTF("- ACCEL: Gravity constant calculated to %d.%2d \n\r", val, pres);
 }
@@ -151,5 +152,23 @@ bool get_z_accel(acceleration_t* acc){
 	acc->z_acc = -(mag - gravity_magnitude); //Assumes the acceleration in x and y direction is negligible. Negative gravity pointing down
 
 	return retVal;
+}
+
+
+void test_accel_accuracy(void){
+	acceleration_t acc;
+	int16_t val;
+	uint16_t pres;
+	char sign;
+
+	PRINTF("Testing accelerometer accuracy \n\r");
+	while(true){
+		if(get_z_accel(&acc)){
+			float_to_str(gravity_magnitude, &sign, &val, &pres);
+			PRINTF("%c%2d.%2d\n\r", sign, val, pres);
+		}
+
+		OSA_TimeDelay(20);
+	}
 }
 

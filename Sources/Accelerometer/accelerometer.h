@@ -23,5 +23,7 @@ bool get_accel_data(acceleration_t *acc);
 //Extracts corrected acceleration data assuming no acceleration in x and y direction
 bool get_z_accel(acceleration_t* acc);
 
+//Function to print keep printing the converted accelerometer data. Warning: infinite loop
+void test_accel_accuracy(void);
 
 #endif /* ACCELEROMETER_H_ */

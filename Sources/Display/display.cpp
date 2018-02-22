@@ -170,15 +170,16 @@ void display_write_local_coord(sys_status_t* status, position_t* pos){
 	display_write_state(status);
 
 	int16_t   val_x,  val_y;
-	uint16_t pres_x, pres_y;
+	uint16_t  pres_x, pres_y;
+	char      sign_x, sign_y;
 
 	if (status->gps_fix) {
-		float_to_str(pos->x, &val_x, &pres_x);
-		float_to_str(pos->y, &val_y, &pres_y);
+		float_to_str(pos->x, &sign_x, &val_x, &pres_x);
+		float_to_str(pos->y, &sign_y, &val_y, &pres_y);
 
-		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%2d.%2d y=%2d.%2d \n", val_x, pres_x, val_y, pres_y);
+		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%c%3d.%2d y=&c%3d.%2d \n", sign_x, val_x, pres_x, sign_y, val_y, pres_y);
 	} else {
-		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%5s y=%5s\n", EMPTY_VAL, EMPTY_VAL);
+		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%7s y=%7s\n", EMPTY_VAL, EMPTY_VAL);
 	}
 	display_write_text(output_str);
 
@@ -186,24 +187,25 @@ void display_write_local_coord(sys_status_t* status, position_t* pos){
 
 //Function for displaying the latest altitude data
 void display_write_data(state_t* state){
-	int16_t val;
+	int16_t  val;
 	uint16_t pres;
+	char 	 sign;
 
 	//Set cursor to the top again
 	reset_cursor_data();
 
 	display_write_text("Vertical: \n");
-	float_to_str(state->pos, &val, &pres);
-	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "z=%3d.%2d \n", val, pres);
+	float_to_str(state->pos, &sign, &val, &pres);
+	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "z=%c%3d.%2d \n", sign, val, pres);
 	display_write_text(output_str);
 
 
-	float_to_str(state->vel, &val, &pres);
-	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "v=%3d.%2d \n", val, pres);
+	float_to_str(state->vel, &sign, &val, &pres);
+	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "v=%c%3d.%2d \n", sign, val, pres);
 	display_write_text(output_str);
 
-	float_to_str(state->acc, &val, &pres);
-	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "a=%3d.%2d \n", val, pres);
+	float_to_str(state->acc, &sign, &val, &pres);
+	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "a=%c%3d.%2d \n", sign, val, pres);
 	display_write_text(output_str);
 }
 

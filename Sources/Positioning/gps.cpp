@@ -12,7 +12,8 @@
 #include <cmath>
 #include <cstdint>
 
-#define LAT_FIXED_PRECISSION 100000
+#define LAT_FIXED_PRECISSION 	100000
+#define MPS_PER_KNOT 			(0.514444)
 
 static Adafruit_GPS GPS;
 
@@ -30,6 +31,10 @@ static float deg_to_rad(float deg){
 
 static float fixed_to_float(int32_t deg_fixed){
 	return (float)(deg_fixed)/LAT_FIXED_PRECISSION;
+}
+
+static float knots_to_mps(float knots){
+	return MPS_PER_KNOT * knots;
 }
 
 //Uses the first fix reading as the origin, and uses this value to compute the
@@ -71,7 +76,7 @@ static void fill_pos(position_t* pos){
 //Converts velocity and heading to local coordinates
 static void fill_vel(velocity_t* vel){
 	float heading = deg_to_rad(GPS.angle);
-	float speed = GPS.speed;
+	float speed = knots_to_mps(GPS.speed);
 	vel->x_vel = speed * sin(heading); 					//East
 	vel->y_vel = speed * cos(heading);					//North
 
@@ -112,7 +117,7 @@ bool gps_read(position_t* pos, velocity_t* vel, sys_status_t* status){
 		//Parse this message
 		GPS.parse(GPS.lastNMEA());
 
-		//print_last_NMEA();
+		print_last_NMEA();
 
 		//If we have a valid fix update the data
 		if (GPS.fix) {

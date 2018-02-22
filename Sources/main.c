@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #define UPDATE_RATE_TARGET_MS	10 					  //target frequency in seconds
 
-#define SCREEN_CYCLE_NUMBER		10						  //how often we update state on the screen
+#define SCREEN_CYCLE_NUMBER		50						  //how often we update state on the screen
 #define RTC_INSTANCE      		BOARD_RTC_FUNC_INSTANCE
 
 
@@ -178,6 +178,9 @@ int main (void)
 	//Start timer -> Should be the last thing before starting prediction
 	start_timer();
 
+	//Comment in to test the accelerometer conversion
+	//test_accel_accuracy();
+
     // Main loop.  Get sensor data and update duty cycle for the TPM timer.
     while(1)
     {
@@ -204,11 +207,11 @@ int main (void)
 		if(gps_read(&pos, &vel, &status)) {
 	        update_pos(&pos);
 	        //update_vel(&vel);
-	        PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int16_t)(pos.x*1000), (int16_t)(pos.y*1000), (int16_t)(pos.z*1000));
+	        PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int32_t)(pos.x*1000), (int32_t)(pos.y*1000), (int32_t)(pos.z*1000));
 		}
 
 
-
+		//Only update the screen at set intervals
         if (screen_cycle < SCREEN_CYCLE_NUMBER) {
         	screen_cycle += 1;
 		}
@@ -224,13 +227,13 @@ int main (void)
             // Print out the accelerometer data.
             display_write_data(&state);
 
-            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int16_t)(state.pos*1000), (int16_t)(state.vel*1000), (int16_t)(state.acc*1000), dt);
+            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int32_t)(state.pos*1000), (int32_t)(state.vel*1000), (int32_t)(state.acc*1000), dt);
         }
 
         dt = get_elapsed_time();
 
         if(UPDATE_RATE_TARGET_MS > dt){
-            OSA_TimeDelay(UPDATE_RATE_TARGET_MS - dt + 1); // Wait for the ramaining time + 1 ms
+            OSA_TimeDelay(UPDATE_RATE_TARGET_MS - dt); // Wait for the ramaining time + 1 ms
 
         }
     }

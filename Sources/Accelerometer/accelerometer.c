@@ -164,7 +164,7 @@ void test_accel_accuracy(void){
 	PRINTF("Testing accelerometer accuracy \n\r");
 	while(true){
 		if(get_z_accel(&acc)){
-			float_to_str(gravity_magnitude, &sign, &val, &pres);
+			float_to_str(acc.z_acc, &sign, &val, &pres);
 			PRINTF("%c%2d.%2d\n\r", sign, val, pres);
 		}
 

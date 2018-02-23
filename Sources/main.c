@@ -178,7 +178,7 @@ int main (void)
 	//Start timer -> Should be the last thing before starting prediction
 	start_timer();
 
-	//Comment in to test the accelerometer conversion
+	//Comment in to test the accelerometer conversion accuracy
 	//test_accel_accuracy();
 
     // Main loop.  Get sensor data and update duty cycle for the TPM timer.
@@ -238,21 +238,6 @@ int main (void)
         }
     }
 
-
-
-    /*
-	while(1){
-
-        // Wait UPDATE_RATE_MS in between updates (accelerometer updates at 200Hz, GPS at 5Hz).
-        OSA_TimeDelay(UPDATE_RATE_MS);
-
-    	//Toggles Green LED ON and OFF
-		LED_toggle_master();
-
-		PRINTF("Time since last reading: %d \n\r", (int16_t)(1000*msec_to_float(get_time_diff())));
-	}
-
-    */
     return 0;
 
 }

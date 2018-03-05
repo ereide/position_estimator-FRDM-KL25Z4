@@ -156,6 +156,7 @@ int main (void)
 
 	//Initiate state struct
 	state_t state;
+	state_t variance;
 
 	//Ininitiate navigation structs
 	position_t 		pos;
@@ -166,14 +167,15 @@ int main (void)
 
 	init_all(&status);
 
-	OSA_TimeDelay(2000);
 
 	display_write_text("Init complete \n");
-	display_write_text("Starts in 3 s \n");
+	display_write_text("Starts in 1 s \n");
 
-	OSA_TimeDelay(1000);
+	OSA_TimeDelay(500);
+
+
 	display_empty_screen();
-	OSA_TimeDelay(2000);
+	OSA_TimeDelay(1000);
 
 	//Start timer -> Should be the last thing before starting prediction
 	start_timer();
@@ -207,7 +209,7 @@ int main (void)
 		if(gps_read(&pos, &vel, &status)) {
 	        update_pos(&pos);
 	        //update_vel(&vel);
-	        PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int32_t)(pos.x*1000), (int32_t)(pos.y*1000), (int32_t)(pos.z*1000));
+	        //PRINTF("Converted Pos:	 x= %de-3 y = %de-3 z = %de-3\r\n", (int32_t)(pos.x*1000), (int32_t)(pos.y*1000), (int32_t)(pos.z*1000));
 		}
 
 
@@ -220,14 +222,19 @@ int main (void)
     		//Read state
 
         	getzState(&state);
+        	getzVar(&variance);
         	getPosState(&pos);
 
-        	//Displays the local coordinates and the status
-            display_write_local_coord(&status, &pos);
-            // Print out the accelerometer data.
-            display_write_data(&state);
+        	//Display Status:
+        	display_write_state(&status);
 
-            PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int32_t)(state.pos*1000), (int32_t)(state.vel*1000), (int32_t)(state.acc*1000), dt);
+        	//Displays the local coordinates if available //Removed due to bug
+        	//display_write_local_coord(&status, &pos);
+
+            // Print out the accelerometer data.
+            display_write_data(&state, &variance);
+
+            //PRINTF("State z:      	 z= %de-3 v = %de-3 a = %de-3 : dt = %dms \r\n", (int32_t)(state.pos*1000), (int32_t)(state.vel*1000), (int32_t)(state.acc*1000), dt);
         }
 
         dt = get_elapsed_time();

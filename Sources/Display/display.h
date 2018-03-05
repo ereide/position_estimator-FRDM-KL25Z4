@@ -49,7 +49,9 @@ void display_fill_screen(void);
 
 void display_write_text(char* str);
 
-void display_write_data(state_t* state);
+void display_write_data(state_t* state, state_t* variance);
+
+void display_write_variance(state_t* variance);
 
 void display_write_local_coord(sys_status_t* status, position_t* pos);
 

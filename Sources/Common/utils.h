@@ -18,7 +18,7 @@ extern "C" {
 
 
 
-void float_to_str(float f, char* sign, int16_t* val, uint16_t* pres);
+void float_to_str(float f, char* sign, uint16_t* val, uint16_t* pres);
 
 
 

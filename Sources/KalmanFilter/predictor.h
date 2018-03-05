@@ -17,12 +17,12 @@
 
 //Porbabilistic parameters
 #define MODEL_ACCEL_VAR               1			//(m/s^2)^2
-#define MODEL_NUMERICAL_ACCEL_VAR	  0.0000001
+#define MODEL_NUMERICAL_ACCEL_VAR	  0.0001
 
 
 #define OBSERVATION_POS_VAR           0.1		//m^2
 #define OBSERVATION_VEL_VAR           0.1		//(m/s)^2
-#define OBSERVATION_ACCEL_VAR         0.1		//(m/s^2)^2
+#define OBSERVATION_ACCEL_VAR         0.3		//(m/s^2)^2
 #define PREDICTOR_MEAN_TIME_DELAY     0.01		//s
 
 //Set to 1 if we expect acceleration to be approximately constant over time

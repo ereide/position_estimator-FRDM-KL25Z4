@@ -82,7 +82,7 @@ void accel_set_zero(void){
 
 	gravity_magnitude = gravity_magnitude/ACCEL_AVERAGE_N;
 
-	int16_t val;
+	uint16_t val;
 	uint16_t pres;
 	char sign;
 	float_to_str(gravity_magnitude, &sign, &val, &pres);
@@ -157,7 +157,7 @@ bool get_z_accel(acceleration_t* acc){
 
 void test_accel_accuracy(void){
 	acceleration_t acc;
-	int16_t val;
+	uint16_t val;
 	uint16_t pres;
 	char sign;
 

@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
 
 #include "display.h"
 #include "utils.h"
@@ -98,7 +99,7 @@ static void configure_cursor(void){
 	oled_display.write('\n');
 	oled_display.write('\n');
 	oled_display.write('\n');
-	oled_display.write('\n');
+	//oled_display.write('\n');
 
 	data_cursor_x = oled_display.getCursorX();
 	data_cursor_y = oled_display.getCursorY();
@@ -167,9 +168,7 @@ void display_write_state(sys_status_t* status){
 
 //Function for displaying latest position data
 void display_write_local_coord(sys_status_t* status, position_t* pos){
-	display_write_state(status);
-
-	int16_t   val_x,  val_y;
+	uint16_t   val_x,  val_y;
 	uint16_t  pres_x, pres_y;
 	char      sign_x, sign_y;
 
@@ -177,7 +176,7 @@ void display_write_local_coord(sys_status_t* status, position_t* pos){
 		float_to_str(pos->x, &sign_x, &val_x, &pres_x);
 		float_to_str(pos->y, &sign_y, &val_y, &pres_y);
 
-		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%c%3d.%2d y=&c%3d.%2d \n", sign_x, val_x, pres_x, sign_y, val_y, pres_y);
+		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%c%3d.%2d y=%c%3d.%2d \n", sign_x, val_x, pres_x, sign_y, val_y, pres_y);
 	} else {
 		snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "x=%7s y=%7s\n", EMPTY_VAL, EMPTY_VAL);
 	}
@@ -186,15 +185,15 @@ void display_write_local_coord(sys_status_t* status, position_t* pos){
 }
 
 //Function for displaying the latest altitude data
-void display_write_data(state_t* state){
-	int16_t  val;
+void display_write_data(state_t* state, state_t* variance){
+	uint16_t  val;
 	uint16_t pres;
 	char 	 sign;
 
 	//Set cursor to the top again
 	reset_cursor_data();
 
-	display_write_text("Vertical: \n");
+	display_write_text((const char*)"Vertical: \n");
 	float_to_str(state->pos, &sign, &val, &pres);
 	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "z=%c%3d.%2d \n", sign, val, pres);
 	display_write_text(output_str);
@@ -207,7 +206,20 @@ void display_write_data(state_t* state){
 	float_to_str(state->acc, &sign, &val, &pres);
 	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "a=%c%3d.%2d \n", sign, val, pres);
 	display_write_text(output_str);
+
+	display_write_variance(variance);
 }
+
+void display_write_variance(state_t* variance){
+	uint16_t  val;
+	uint16_t pres;
+	char 	 sign;
+
+	float_to_str(log10f(variance->pos), &sign, &val, &pres);
+	snprintf(output_str, DISPLAY_OUTPUT_STR_MAX_LENGTH, "lVar(z)=%c%3d.%2d \n", sign, val, pres);
+	display_write_text(output_str);
+}
+
 
 
 //To test that the module is working

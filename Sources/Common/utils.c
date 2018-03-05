@@ -13,10 +13,10 @@
 
 #define SIGN(X)  ((X) < 0 ? '-' : '+')
 
-void float_to_str(float f, char* sign, int16_t* val, uint16_t* pres){
+void float_to_str(float f, char* sign, uint16_t* val, uint16_t* pres){
 	float temp;
 	temp  = trunc(f);
-	*val  = (int16_t)abs(temp);
+	*val  = (uint16_t)abs(temp);
 	temp  = f - temp;
 	*pres = (uint16_t)(trunc(abs(temp*100)));
 	*sign = SIGN(f);

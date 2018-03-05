@@ -20,13 +20,12 @@ static Adafruit_GPS GPS;
 //Define offset
 static bool has_zero;
 static int32_t zero_latitude_fixed, zero_longitude_fixed;
-static float zero_altitude;
 
 static float m_per_deg_lat;
 static float m_per_deg_lon;
 
 static float deg_to_rad(float deg){
-	return M_PI*deg/180;
+	return M_PI*deg/180.0;
 }
 
 static float fixed_to_float(int32_t deg_fixed){
@@ -63,7 +62,7 @@ static float longitude_to_local(int32_t longitude_Fixed){
 }
 
 static float altitude_to_local(float altitude){
-	return altitude - zero_altitude;
+	return altitude;
 }
 
 //Converts geographical coordinates to a local coordinate system
@@ -140,6 +139,7 @@ bool gps_read(position_t* pos, velocity_t* vel, sys_status_t* status){
 		}
 
 		else{
+			status->gps_fix = false;
 			return false;
 		}
 	}
